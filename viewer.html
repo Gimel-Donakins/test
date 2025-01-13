@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Screenshot Viewer</title>
+    <style>
+        .screenshot {
+            max-width: 100%;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Screenshots</h1>
+    <div id="screenshotContainer"></div>
+
+    <script>
+        function loadScreenshots() {
+            const container = document.getElementById('screenshotContainer');
+            
+            // List files in the images directory
+            fetch('/images')
+                .then(response => response.json())
+                .then(files => {
+                    container.innerHTML = '';
+                    files.forEach(file => {
+                        const img = document.createElement('img');
+                        img.src = `/images/${file}`;
+                        img.className = 'screenshot';
+                        container.appendChild(img);
+                    });
+                });
+        }
+
+        // Refresh every 5 seconds
+        setInterval(loadScreenshots, 5000);
+        loadScreenshots();
+    </script>
+</body>
+</html>
