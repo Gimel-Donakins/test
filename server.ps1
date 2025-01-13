@@ -1,6 +1,6 @@
 # Create HTTP listener
 $listener = New-Object System.Net.HttpListener
-$listener.Prefixes.Add("http://192.168.1.246:8080/")  # or use specific IP like "http://192.168.1.246:8080/"
+$listener.Prefixes.Add("http://192.168.56.1:8080/")  # or use specific IP like "http://192.168.1.246:8080/"
 
 # Create images directory with absolute path - using multiple fallback options
 $scriptPath = $null
